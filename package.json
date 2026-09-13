@@ -1,0 +1,22 @@
+{
+  "name": "antigravity-hans",
+  "version": "1.0.0",
+  "description": "Simplified Chinese localisation for the Google Antigravity desktop app, injected at runtime over the Chrome DevTools Protocol. No app files are modified.",
+  "keywords": [
+    "antigravity",
+    "chinese",
+    "localization",
+    "i18n",
+    "electron",
+    "cdp"
+  ],
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "setup": "powershell -ExecutionPolicy Bypass -File scripts/install.ps1",
+    "teardown": "powershell -ExecutionPolicy Bypass -File scripts/uninstall.ps1"
+  }
+}

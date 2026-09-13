@@ -57,7 +57,43 @@ if (-not $nodeExe) {
     }
 }
 if (-not $nodeExe) {
-    Die "Node.js not found. Install it from https://nodejs.org (LTS) and re-run."
+    # No system Node. Rather than sending the user off to nodejs.org, fetch a
+    # portable copy into the project folder. Nothing is installed system-wide
+    # and nothing is written to PATH -- it lives and dies with this folder.
+    Step 'Node.js not found - fetching a portable copy (about 30 MB)...'
+    $runtimeDir = Join-Path $ProjectDir 'runtime'
+    $nodeDir = Join-Path $runtimeDir 'node'
+    if (-not (Test-Path $runtimeDir)) { New-Item -ItemType Directory -Path $runtimeDir -Force | Out-Null }
+
+    try {
+        $index = Invoke-RestMethod 'https://nodejs.org/dist/index.json' -UseBasicParsing -TimeoutSec 30
+        $lts = $index | Where-Object { $_.lts } | Select-Object -First 1
+        if (-not $lts) { throw 'could not determine the current LTS release' }
+        $ver = $lts.version
+
+        $zipName = "node-$ver-win-x64.zip"
+        $url = "https://nodejs.org/dist/$ver/$zipName"
+        $zipPath = Join-Path $runtimeDir $zipName
+
+        Step "  downloading $ver ..."
+        $ProgressPreference = 'SilentlyContinue'
+        Invoke-WebRequest -Uri $url -OutFile $zipPath -UseBasicParsing -TimeoutSec 600
+
+        Step '  extracting ...'
+        Expand-Archive -Path $zipPath -DestinationPath $runtimeDir -Force
+        Remove-Item $zipPath -Force -ErrorAction SilentlyContinue
+
+        $extracted = Join-Path $runtimeDir "node-$ver-win-x64"
+        if (-not (Test-Path $extracted)) { throw "unexpected archive layout, expected $extracted" }
+        if (Test-Path $nodeDir) { Remove-Item $nodeDir -Recurse -Force }
+        Rename-Item -Path $extracted -NewName 'node'
+
+        $nodeExe = Join-Path $nodeDir 'node.exe'
+        Ok "portable node installed at runtime\node"
+    }
+    catch {
+        Die "Could not fetch Node.js automatically ($($_.Exception.Message)).`n       Install it manually from https://nodejs.org and re-run this script."
+    }
 }
 Ok "node: $nodeExe"
 

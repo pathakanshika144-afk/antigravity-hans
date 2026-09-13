@@ -58,28 +58,24 @@ Antigravity 启动时会带 `--remote-debugging-port=0` 参数，实际端口写
 |---|---|
 | 系统 | Windows 10 / 11 |
 | Antigravity | 桌面版 2.13.x（其他版本理论可用，未逐一验证） |
-| Node.js | **22 或更高**（依赖全局 `fetch` 与 `WebSocket`） |
-
-Node 没装的话去 <https://nodejs.org> 下 LTS 版。
+| Node.js | **不需要手动装** —— 安装器检测不到会自动下载绿色版 |
 
 ---
 
 ## 安装
 
-```powershell
-git clone https://github.com/pathakanshika144-afk/antigravity-hans.git
-cd antigravity-hans
-powershell -ExecutionPolicy Bypass -File scripts\install.ps1
-```
+**下载本仓库，双击 `install.bat`，完事。**
 
-安装脚本会：
+安装器会自动完成四件事：
 
-1. 检测 Node.js（版本不够会明确报错）
-2. 定位 Antigravity.exe
+1. 找 Node.js —— 系统里没有就**自动下载一个绿色版**解压到 `runtime\`，不装进系统、不改 PATH、不留痕迹
+2. 定位 `Antigravity.exe`（找不到就从现有快捷方式里反推）
 3. 生成 `launcher.vbs`（无窗口启动器）
 4. **备份**并改写桌面 / 开始菜单的 Antigravity 快捷方式，指向启动器
 
-之后照常从快捷方式启动即可，窗口出现后几秒界面变中文。原始快捷方式备份在 `backup\`。
+之后照常点快捷方式启动，窗口出现后几秒界面变中文。原始快捷方式备份在 `backup\`。
+
+> 首次运行会联网下载约 30 MB 的 Node.js。如果公司网络拦截了 nodejs.org，会退回提示你手动安装。
 
 ---
 

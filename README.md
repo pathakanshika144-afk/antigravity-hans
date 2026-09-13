@@ -4,9 +4,13 @@
 
 运行时注入，**不修改 Antigravity 的任何文件**。
 
+*[English →](README.en.md)*
+
 ---
 
 ## 效果
+
+![中文界面](docs/screenshot-zh.png)
 
 菜单、侧边栏、设置面板、权限询问弹窗、运行状态提示都会显示为中文：
 

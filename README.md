@@ -107,33 +107,6 @@ powershell -ExecutionPolicy Bypass -File scripts\uninstall.ps1
 
 ---
 
-## 让它走代理
-
-**本项目不含任何代理配置** —— 那取决于你用什么工具、监听哪个端口。
-
-如果你在墙内，Antigravity 的语言服务器（Go 写的）不读 Windows 系统代理，只认环境变量，会出现「能登录界面但 AI 请求超时」。典型的报错长这样：
-
-```
-Post "https://oauth2.googleapis.com/token": dial tcp 74.125.142.95:443: connectex: ...
-```
-
-`dial tcp` 是 Go 的特征。解决办法是给它注入代理环境变量。
-
-**做法**：编辑 `scripts\launcher.vbs`，在 `sh.Run` 之前加上：
-
-```vbs
-Set env = sh.Environment("PROCESS")
-env("HTTP_PROXY")  = "http://127.0.0.1:你的端口"
-env("HTTPS_PROXY") = "http://127.0.0.1:你的端口"
-env("NO_PROXY")    = "localhost,127.0.0.1,::1,192.168.0.0/16,10.0.0.0/8,172.16.0.0/12"
-```
-
-`NO_PROXY` **必须加** —— Antigravity 内部有大量 `127.0.0.1` 的进程间通信，不排除会被代理绕死。
-
-改完从快捷方式启动，代理和汉化会一起生效。
-
----
-
 ## 自定义词典
 
 词典是纯 JSON，格式就是英文对中文：
